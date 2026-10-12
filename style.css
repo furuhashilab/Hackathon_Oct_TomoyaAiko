@@ -1,0 +1,158 @@
+/* 北の森と雪：紙のような白地に、エゾマツの深緑と苔色 */
+:root {
+  --paper: #f5f3ec;
+  --paper-2: #ebe8dd;
+  --ink: #1e2a22;
+  --muted: #66705f;
+  --rule: #d6d1c2;
+  --forest: #2e5b3c;
+  --moss: #7d9a63;
+  --ice: #6f9db8;
+  --accent: var(--forest);
+  --display: "Zen Old Mincho", "Hiragino Mincho ProN", serif;
+  --body: "Zen Kaku Gothic New", "Hiragino Sans", system-ui, sans-serif;
+}
+body.winter { --accent: #3f6f8c; --paper: #f4f6f7; --paper-2: #e6ecef; --rule: #cfd8dd; }
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: #1b2420; font-family: var(--body); color: var(--ink); }
+#viewer { position: absolute; inset: 0; }
+button { font: inherit; color: inherit; }
+
+/* ---------- パネル ---------- */
+#panel {
+  position: absolute; top: 14px; left: 14px; width: 312px; max-height: calc(100% - 28px);
+  display: flex; flex-direction: column; background: var(--paper);
+  border-radius: 4px; box-shadow: 0 10px 30px rgba(10, 20, 14, .35);
+  overflow: hidden; font-size: 13px; transition: background .4s;
+}
+#panel header { position: relative; padding: 16px 18px 12px; background: var(--accent); color: #f5f3ec; transition: background .4s; }
+#panel header .ridge { position: absolute; left: 0; right: 0; bottom: -1px; width: 100%; height: 22px; fill: var(--paper); transition: fill .4s; }
+.title { position: relative; display: flex; gap: 10px; align-items: center; padding-bottom: 14px; }
+.torii { width: 30px; height: 26px; fill: #d9553b; flex: none; }
+body.winter .torii { fill: #f5f3ec; }
+#panel h1 { margin: 0; font-family: var(--display); font-size: 20px; font-weight: 700; letter-spacing: .08em; }
+#panel .sub { margin: 2px 0 0; font-size: 11px; opacity: .8; letter-spacing: .06em; }
+#togglePanel { display: none; position: absolute; right: 12px; top: 16px; width: 32px; height: 32px; border: 0; background: none; cursor: pointer; color: #f5f3ec; }
+#togglePanel svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 1.8; fill: none; }
+
+#panel .body { overflow-y: auto; padding: 4px 18px 14px; scrollbar-width: thin; }
+#panel h2, .group-title {
+  font-family: var(--display); font-size: 13px; font-weight: 700; letter-spacing: .12em;
+  color: var(--accent); margin: 18px 0 6px; display: flex; align-items: center; gap: 8px;
+}
+#panel h2::after, .group-title::after { content: ""; flex: 1; border-top: 1px solid var(--rule); }
+
+/* ---------- 季節 ---------- */
+.season { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+.season button {
+  display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: 8px; align-items: center;
+  padding: 8px 10px; border: 1px solid var(--rule); background: transparent; border-radius: 3px; cursor: pointer; text-align: left;
+}
+.season svg { grid-row: span 2; width: 22px; height: 22px; fill: none; stroke: var(--muted); stroke-width: 1.6; stroke-linecap: round; }
+.season span { font-family: var(--display); font-size: 16px; font-weight: 700; line-height: 1.1; }
+.season small { font-size: 10px; color: var(--muted); }
+.season button[aria-checked="true"] { border-color: var(--accent); background: var(--paper-2); box-shadow: inset 3px 0 0 var(--accent); }
+.season button[aria-checked="true"] svg { stroke: var(--accent); }
+
+/* ---------- スポット ---------- */
+#spots ol { list-style: none; margin: 0; padding: 0; }
+#spots li + li { border-top: 1px dotted var(--rule); }
+#spots button {
+  width: 100%; display: grid; grid-template-columns: 22px 1fr; column-gap: 10px; align-items: baseline;
+  padding: 7px 4px; border: 0; background: none; cursor: pointer; text-align: left;
+}
+#spots .no {
+  width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; align-self: center;
+  font-size: 10px; font-weight: 700; color: var(--accent); border: 1.5px solid var(--accent); font-variant-numeric: tabular-nums;
+}
+#spots .name { font-weight: 500; }
+#spots .note { grid-column: 2; font-size: 11px; color: var(--muted); }
+#spots button:hover .name { text-decoration: underline; text-decoration-color: var(--moss); text-underline-offset: 3px; }
+#spots button.on .no { background: var(--accent); color: var(--paper); }
+#spots button.on .name { color: var(--accent); font-weight: 700; }
+
+/* ---------- ラジオ ---------- */
+.radios { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.radios label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; padding: 3px 0; }
+.radios input { appearance: none; width: 14px; height: 14px; margin: 0; border: 1.5px solid var(--muted); border-radius: 50%; display: grid; place-items: center; cursor: pointer; }
+.radios input:checked { border-color: var(--accent); }
+.radios input:checked::after { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.radios input:focus-visible { outline: 2px solid var(--ice); outline-offset: 2px; }
+
+#legend { margin-top: 8px; }
+#legend:empty { display: none; }
+#legend .bar { display: flex; height: 8px; }
+#legend .bar i { flex: 1; }
+#legend .ticks { display: flex; justify-content: space-between; color: var(--muted); font-size: 10px; margin-top: 3px; }
+
+#infoList { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; margin: 0; font-size: 12px; }
+#infoList dt { color: var(--muted); }
+#infoList dd { margin: 0; word-break: break-all; }
+
+.hint { color: var(--muted); font-size: 11px; margin: 16px 0 0; line-height: 1.6; }
+#panel footer { padding: 9px 18px 11px; border-top: 1px solid var(--rule); color: var(--muted); font-size: 10px; line-height: 1.6; background: var(--paper-2); transition: background .4s; }
+#panel a { color: inherit; }
+
+/* ---------- 読み込み表示 ---------- */
+#loading {
+  position: absolute; left: 50%; bottom: 44px; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 10px; padding: 8px 16px; border-radius: 2px;
+  background: var(--paper); color: var(--ink); font-size: 12px; letter-spacing: .06em; white-space: nowrap;
+  box-shadow: 0 6px 20px rgba(0,0,0,.3); transition: opacity .6s;
+}
+#loading .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); animation: pulse 1s ease-in-out infinite alternate; }
+@keyframes pulse { from { opacity: .25; } to { opacity: 1; } }
+#loading.done { opacity: 0; pointer-events: none; }
+
+@media (max-width: 600px) {
+  #panel { left: 8px; right: 8px; top: 8px; width: auto; max-height: 62%; }
+  #togglePanel { display: block; }
+  #panel.collapsed .body, #panel.collapsed footer { display: none; }
+  #panel.collapsed .title { padding-bottom: 8px; }
+  #panel.collapsed .ridge { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { #loading .dot { animation: none; } }
+
+/* ---------- スポットカード ---------- */
+#spotCard {
+  position: absolute; right: 14px; bottom: 36px; width: 340px; max-height: calc(100% - 60px);
+  background: var(--paper); border-radius: 4px; overflow: hidden auto;
+  box-shadow: 0 10px 30px rgba(10, 20, 14, .35); font-size: 12.5px; transition: background .4s;
+}
+#spotCard[hidden] { display: none; }
+#spotCard .photo { aspect-ratio: 16 / 10; background: var(--paper-2); }
+#spotCard .photo[hidden] { display: none; }
+#spotCard .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+#spotCard .text { padding: 12px 16px 12px; }
+#spotCard header { display: flex; align-items: center; gap: 8px; }
+#spotCard .no {
+  width: 22px; height: 22px; flex: none; border-radius: 50%; display: grid; place-items: center;
+  background: var(--accent); color: var(--paper); font-size: 11px; font-weight: 700;
+}
+#spotCard h3 { margin: 0; flex: 1; font-family: var(--display); font-size: 17px; letter-spacing: .06em; }
+#spotCard .close { width: 28px; height: 28px; border: 0; background: none; cursor: pointer; color: var(--muted); padding: 4px; }
+#spotCard .close svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 1.8; }
+#spotCard .extract { margin: 8px 0 10px; line-height: 1.7; }
+#spotCard .links { display: flex; gap: 8px; flex-wrap: wrap; }
+#spotCard .links:empty { display: none; }
+#spotCard .links a {
+  display: inline-flex; align-items: center; gap: 4px; padding: 5px 12px; border: 1px solid var(--accent);
+  color: var(--accent); text-decoration: none; border-radius: 2px; font-weight: 500;
+}
+#spotCard .links a::after { content: "↗"; font-size: 11px; }
+#spotCard .links a:first-child { background: var(--accent); color: var(--paper); }
+#spotCard .links a:hover { filter: brightness(1.1); }
+#spotCard .credit { margin: 10px 0 0; color: var(--muted); font-size: 10px; line-height: 1.5; }
+#spotCard .credit:empty { display: none; }
+#spotCard a { color: inherit; }
+#spotCard .links a { color: var(--accent); }
+#spotCard .links a:first-child { color: var(--paper); }
+
+@media (max-width: 600px) {
+  #spotCard { left: 8px; right: 8px; bottom: 28px; width: auto; max-height: 48%; display: grid; grid-template-columns: 110px 1fr; }
+  #spotCard[hidden] { display: none; }
+  #spotCard .photo { aspect-ratio: auto; height: 100%; }
+  #spotCard .photo[hidden] + .text { grid-column: span 2; }
+  #spotCard .extract { -webkit-line-clamp: 4; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; }
+}

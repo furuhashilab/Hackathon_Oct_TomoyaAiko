@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>北海道神宮 3D探訪</title>
+<meta name="description" content="CesiumJS と PLATEAU 3D Tiles で札幌市中央区・北海道神宮周辺を3Dで歩く。FuruhashiLab 10月ハッカソン作品。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Zen+Old+Mincho:wght@600;700&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cesium@1.146.0/Build/Cesium/Widgets/widgets.css">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/cesium@1.146.0/Build/Cesium/Cesium.js" defer></script>
+<script src="main.js" defer></script>
+</head>
+<body class="summer">
+<div id="viewer"></div>
+<article id="spotCard" hidden>
+  <div class="photo" hidden></div>
+  <div class="text">
+    <header><span class="no"></span><h3></h3>
+      <button class="close" aria-label="閉じる"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15"/></svg></button>
+    </header>
+    <p class="extract"></p>
+    <div class="links"></div>
+    <p class="credit"></p>
+  </div>
+</article>
+<div id="loading"><span class="dot"></span>地形と建物を読み込み中</div>
+
+<aside id="panel">
+  <header>
+    <svg class="ridge" viewBox="0 0 320 40" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 40 L0 30 C40 28 70 14 105 12 C125 11 140 4 160 3 C185 2 200 14 230 20 C260 26 290 24 320 28 L320 40 Z"/>
+    </svg>
+    <div class="title">
+      <svg class="torii" viewBox="0 0 32 28" aria-hidden="true">
+        <path d="M1 4 Q16 0 31 4 L31 7 Q16 3.5 1 7 Z"/>
+        <rect x="4" y="10" width="24" height="2.4"/>
+        <rect x="7.5" y="5.5" width="2.6" height="22"/>
+        <rect x="21.9" y="5.5" width="2.6" height="22"/>
+        <rect x="14.8" y="6.5" width="2.4" height="4"/>
+      </svg>
+      <div>
+        <h1>北海道神宮 3D探訪</h1>
+        <p class="sub">札幌市中央区をめぐる 3D 散策帖</p>
+      </div>
+    </div>
+    <button id="togglePanel" aria-label="パネルを開閉" aria-expanded="true">
+      <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 6h14M3 10h14M3 14h14"/></svg>
+    </button>
+  </header>
+
+  <div class="body">
+    <div class="season" role="radiogroup" aria-label="季節">
+      <button role="radio" data-season="summer" aria-checked="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19c0-8 6-14 15-14 0 9-6 15-14 15M5 19l7-7"/></svg>
+        <span>夏</span><small>みどりの円山</small>
+      </button>
+      <button role="radio" data-season="winter" aria-checked="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7M9 4l3 2.5L15 4M9 20l3-2.5 3 2.5"/></svg>
+        <span>冬</span><small>雪の札幌</small>
+      </button>
+    </div>
+
+    <nav id="spots" aria-label="スポット"></nav>
+
+    <section class="opts">
+      <h2>建物のぬりわけ</h2>
+      <div class="radios" id="styleMode">
+        <label><input type="radio" name="style" value="texture" checked>そのまま</label>
+        <label><input type="radio" name="style" value="height">高さ</label>
+        <label><input type="radio" name="style" value="year">建築年</label>
+      </div>
+      <div id="legend"></div>
+      <h2>背景</h2>
+      <div class="radios" id="baseMode">
+        <label><input type="radio" name="base" value="photo" checked>航空写真</label>
+        <label><input type="radio" name="base" value="pale">地図</label>
+      </div>
+    </section>
+
+    <section id="info" hidden>
+      <h2>えらんだ建物</h2>
+      <dl id="infoList"></dl>
+    </section>
+
+    <p class="hint">建物をクリックすると属性が見られます。右ドラッグ（スマホは2本指）で視点を傾けられます。</p>
+  </div>
+
+  <footer>
+    出典：<a href="https://www.mlit.go.jp/plateau/" target="_blank" rel="noopener">3D都市モデル（Project PLATEAU）札幌市 2020年度</a>（国土交通省）、
+    <a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">地理院タイル</a>（写真・淡色地図・標高）を加工して作成。スポット位置は © OpenStreetMap contributors。<br>
+    冬の景色は写真を加工した演出です。スポットの写真・解説は Wikipedia / Wikimedia Commons より。<br>
+    © 2026 Tomoya Aiko · <a href="https://creativecommons.org/licenses/by/4.0/deed.ja" target="_blank" rel="noopener">CC BY 4.0</a> ·
+    <a href="https://github.com/furuhashilab/Hackathon_Oct_TomoyaAiko" target="_blank" rel="noopener">GitHub</a>
+  </footer>
+</aside>
+</body>
+</html>
